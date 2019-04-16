@@ -1,10 +1,11 @@
+
 package inscriptionecole;
 
 public class DossierCandidatureGER {
 	  // Ici des attributs
 	  String nomcandidat;
 	  String numeroinsee;
-	  String statut_encours="non enregistrÈ";
+	  String statut_encours="non enregistr√©";
 	  Boolean signature = false;
 	  Boolean presence_oral = true;
 	  int note_ecrit;
@@ -16,80 +17,92 @@ public class DossierCandidatureGER {
 		  statut_encours="ENREGISTRE";
 	  }
 	  public void enregistrerEmargementEpreuveEcrite(){
-		  signature=true;
-		  statut_encours="EMARGE";
+		  if(statut_encours.equals("ADMIS")) {
+			  throw new IllegalStateException("le candidat est d√©j√† admis.");
+		  }else {
+			  signature=true;
+			  statut_encours="EMARGE";
+		  }
 	  }
 	  public void enregistrerNoteEpreuveEcrite(int note){
-		  if(signature) {
-			  note_ecrit=note;
-			  statut_encours="NOTE_ECRIT_TRANSMISE";
+		  if(statut_encours.equals("ADMIS")) {
+			  throw new IllegalStateException("le candidat est d√©j√† admis.");
 		  }else {
-			  throw new IllegalStateException("signature manquante");
+			  if(signature) {
+				  note_ecrit=note;
+				  statut_encours="NOTE_ECRIT_TRANSMISE";
+			  }else {
+				  throw new IllegalStateException("signature manquante");
+			  }
 		  }
 	  }
 	  public void publierResultatEcrit(){
 		  if(statut_encours.equals("ENREGISTRE")) {
-			  throw new IllegalStateException("le candidat est seulement enregistrÈ");
+			  throw new IllegalStateException("le candidat est seulement enregistr√©");
+		  }else if(statut_encours.equals("ADMIS")) {
+			  throw new IllegalStateException("le candidat est d√©j√† admis.");
 		  }else {
-			  System.out.println("A l'Èpreuve Ècrite ;le candidat a obtenu la note de: "+note_ecrit);
+			  System.out.println("A l'√©preuve √©crite ;le candidat a obtenu la note de: "+note_ecrit);
 			  if(note_ecrit<10) {
 				  statut_encours="NON_ADMISSIBLE";
-				  System.out.println("DÈsolÈ, vous avez ratÈ votre Èpreuve d'admissibilitÈ.");
+				  System.out.println("D√©sol√©, vous avez rat√© votre √©preuve d'admissibilit√©.");
 			  }else {
-				  System.out.println("FÈlicitations vous Ítes admissible");
+				  System.out.println("F√©licitations vous √™tes admissible");
 				  statut_encours="ADMISSIBLE";
 			  }
 		  }
 	  }
 	  public void enregistrerNoteEpreuveOrale(int note){
-		  if(note_ecrit>=10 && presence_oral) {
-		  note_oral=note;
-		  statut_encours="NOTE_ORAL_TRANSMISE";
+		  if(statut_encours.equals("ADMIS")) {
+			  throw new IllegalStateException("le candidat est d√©j√† admis.");
 		  }else {
-			  throw new IllegalStateException("Le candidat n'Ètait pas admissible ou Ètait absent ‡ l'Èpreuve orale.");
+		 	if(note_ecrit>=10 && presence_oral) {
+		 		note_oral=note;
+		 		statut_encours="NOTE_ORAL_TRANSMISE";
+		 	}else {
+			  throw new IllegalStateException("Le candidat n'√©tait pas admissible ou √©tait absent √† l'√©preuve orale.");
+		 	}
 		  }
 	  }
 	  public void enregistrerAbsenceALOral(){
-		  presence_oral=false;
+		  if(statut_encours.equals("ENREGISTRE")) {
+			  throw new IllegalStateException("le candidat est seulement enregistr√©");
+		  }else {
+		 	presence_oral=false;
+		 	statut_encours="NON_ADMIS";
+		  }
 	  }
 	  public void publierResultatFinal(){
-		  if(!signature) {
-			  System.out.println("Vous ne vous Ítes pas prÈsentÈ aux Èpreuves Ècrites");
+		  if(statut_encours.equals("ADMIS")) {
+			  throw new IllegalStateException("le candidat est d√©j√† admis.");
 		  }else {
-			  if(note_ecrit<10) {
-				  System.out.println("DÈsolÈ, vous avez ratÈ votre Èpreuve d'admissibilitÈ.");
+			  if(!signature) {
+				  System.out.println("Vous ne vous √™tes pas pr√©sent√© aux √©preuves √©crites");
 			  }else {
-				  if(!presence_oral) {
-					  System.out.println("Vous ne vous Ítes pas prÈsentÈ aux Èpreuves Ècrites");
+				  if(note_ecrit<10) {
+					  System.out.println("D√©sol√©, vous avez rat√© votre √©preuve d'admissibilit√©.");
 				  }else {
-					  if(note_oral<10) {
+					  if(!presence_oral) {
+						  System.out.println("Vous ne vous √™tes pas pr√©sent√© aux √©preuves √©crites");
 						  statut_encours="NON_ADMIS";
-						  System.out.println("DÈsolÈ, vous avez ratÈ votre Èpreuve d'admission.");
 					  }else {
-						  statut_encours="ADMIS";
-						  System.out.println("FÈlicitations vous Ítes admis!");
+						  if(note_oral<10) {
+							  statut_encours="NON_ADMIS";
+							  System.out.println("D√©sol√©, vous avez rat√© votre √©preuve d'admission.");
+						  }else {
+							  statut_encours="ADMIS";
+							  System.out.println("F√©licitations vous √™tes admis!");
+						  }
 					  }
 				  }
 			  }
 		  }
 	  }
-	  public String toString(){
-		  String statut="Nom: "+nomcandidat+" NumÈro INSEE: "+numeroinsee+" ";
-		 //on souhaite complÈter statut avec statut_encours et, le cas ÈchÈant, les notes.
-		  switch(statut_encours) {
-		  case "ENREGISTRE": statut+="ENREGISTRE";
-		  case "EMARGE": statut+="EMARGE";
-		  case "NOTE_ECRIT_TRANSMISE": statut+="NOTE_ECRIT_TRANSMISE";
-		  case "NON_ADMISSIBLE": statut+="Note Ècrit: "+note_ecrit+" "+"NON_ADMISSIBLE";
-		  case "ADMISSIBLE": statut+="Note Ècrit: "+note_ecrit+" "+"ADMISSIBLE";
-		  case "NOTE_ORAL_TRANSMISE": statut+="Note Ècrit: "+note_ecrit+" "+"NOTE_ORAL_TRANSMISE";
-		  case "NON_ADMIS": statut+="Note Ècrit: "+note_ecrit+" "+"Note oral: "+note_oral+" NON_ADMIS";
-		  case "ADMIS": statut+="Note Ècrit: "+note_ecrit+" "+"Note oral: "+note_oral+" ADMIS";
-		  }
-		
-		  return statut;
-		  
-	  }
+	public String toString() {
+   		 String noteEcrit = signature ? " Note √©crit: "+note_ecrit + " " : "";
+		  String noteOral = presence_oral ? " Note oral: "+note_oral + " ": "";
+ 	 	  return String.format( "Nom : %s Num√©ro INSEE: %s%s%s %s",nomcandidat,numeroinsee,noteEcrit,noteOral,statut_encours);
+	}
 
 	  public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -97,3 +110,5 @@ public class DossierCandidatureGER {
 	}
 
 }
+
+
