@@ -4,7 +4,7 @@ public class DossierCandidatureGER {
 	  // Ici des attributs
 	  String nomcandidat;
 	  String numeroinsee;
-	  String statut_encours="non enregistré";
+	  String statut_encours="non enregistrÃ©";
 	  Boolean signature = false;
 	  Boolean presence_oral = true;
 	  int note_ecrit;
@@ -29,14 +29,14 @@ public class DossierCandidatureGER {
 	  }
 	  public void publierResultatEcrit(){
 		  if(statut_encours.equals("ENREGISTRE")) {
-			  throw new IllegalStateException("le candidat est seulement enregistré");
+			  throw new IllegalStateException("le candidat est seulement enregistrÃ©");
 		  }else {
-			  System.out.println("A l'épreuve écrite ;le candidat a obtenu la note de: "+note_ecrit);
+			  System.out.println("A l'Ã©preuve Ã©crite ;le candidat a obtenu la note de: "+note_ecrit);
 			  if(note_ecrit<10) {
 				  statut_encours="NON_ADMISSIBLE";
-				  System.out.println("Désolé, vous avez raté votre épreuve d'admissibilité.");
+				  System.out.println("DÃ©solÃ©, vous avez ratÃ© votre Ã©preuve d'admissibilitÃ©.");
 			  }else {
-				  System.out.println("Félicitations vous êtes admissible");
+				  System.out.println("FÃ©licitations vous Ãªtes admissible");
 				  statut_encours="ADMISSIBLE";
 			  }
 		  }
@@ -46,7 +46,7 @@ public class DossierCandidatureGER {
 		  note_oral=note;
 		  statut_encours="NOTE_ORAL_TRANSMISE";
 		  }else {
-			  throw new IllegalStateException("Le candidat n'était pas admissible ou était absent à l'épreuve orale.");
+			  throw new IllegalStateException("Le candidat n'Ã©tait pas admissible ou Ã©tait absent Ã  l'Ã©preuve orale.");
 		  }
 	  }
 	  public void enregistrerAbsenceALOral(){
@@ -54,42 +54,30 @@ public class DossierCandidatureGER {
 	  }
 	  public void publierResultatFinal(){
 		  if(!signature) {
-			  System.out.println("Vous ne vous êtes pas présenté aux épreuves écrites");
+			  System.out.println("Vous ne vous Ãªtes pas prÃ©sentÃ© aux Ã©preuves Ã©crites");
 		  }else {
 			  if(note_ecrit<10) {
-				  System.out.println("Désolé, vous avez raté votre épreuve d'admissibilité.");
+				  System.out.println("DÃ©solÃ©, vous avez ratÃ© votre Ã©preuve d'admissibilitÃ©.");
 			  }else {
 				  if(!presence_oral) {
-					  System.out.println("Vous ne vous êtes pas présenté aux épreuves écrites");
+					  System.out.println("Vous ne vous Ãªtes pas prÃ©sentÃ© aux Ã©preuves Ã©crites");
 				  }else {
 					  if(note_oral<10) {
 						  statut_encours="NON_ADMIS";
-						  System.out.println("Désolé, vous avez raté votre épreuve d'admission.");
+						  System.out.println("DÃ©solÃ©, vous avez ratÃ© votre Ã©preuve d'admission.");
 					  }else {
 						  statut_encours="ADMIS";
-						  System.out.println("Félicitations vous êtes admis!");
+						  System.out.println("FÃ©licitations vous Ãªtes admis!");
 					  }
 				  }
 			  }
 		  }
 	  }
-	  public String toString(){
-		  String statut="Nom: "+nomcandidat+" Numéro INSEE: "+numeroinsee+" ";
-		 //on souhaite compléter statut avec statut_encours et, le cas échéant, les notes.
-		  switch(statut_encours) {
-		  case "ENREGISTRE": statut+="ENREGISTRE";
-		  case "EMARGE": statut+="EMARGE";
-		  case "NOTE_ECRIT_TRANSMISE": statut+="NOTE_ECRIT_TRANSMISE";
-		  case "NON_ADMISSIBLE": statut+="Note écrit: "+note_ecrit+" "+"NON_ADMISSIBLE";
-		  case "ADMISSIBLE": statut+="Note écrit: "+note_ecrit+" "+"ADMISSIBLE";
-		  case "NOTE_ORAL_TRANSMISE": statut+="Note écrit: "+note_ecrit+" "+"NOTE_ORAL_TRANSMISE";
-		  case "NON_ADMIS": statut+="Note écrit: "+note_ecrit+" "+"Note oral: "+note_oral+" NON_ADMIS";
-		  case "ADMIS": statut+="Note écrit: "+note_ecrit+" "+"Note oral: "+note_oral+" ADMIS";
-		  }
-		
-		  return statut;
-		  
-	  }
+	public String toString() {
+   		 String noteEcrit = signature ? " Note Ã©crit: "+note_ecrit + " " : StringUtils.EMPTY;
+		  String noteOral = presence_oral ? " Note oral: "+note_oral + " ": StringUtils.EMPTY;
+ 	 	  return String.format( "Nom : %s NumÃ©ro INSEE: %s%s%s %s",nomcandidat,numeroinsee,noteEcrit,noteOral,statut_encours)
+	}
 
 	  public static void main(String[] args) {
 		// TODO Auto-generated method stub
